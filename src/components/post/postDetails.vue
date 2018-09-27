@@ -5,7 +5,7 @@
             <div class="post">
                 <div class="postTitle">{{postTitle}}</div>
                 <div class="postContent">{{postContent}}</div>
-                <div class="postTime"><span class="bigBox"><span class="smBox">{{toTime(parseInt(postTime))}}</span>发表于 通知公告</span></div>
+                <div class="postTime"><span class="bigBox"><span class="smBox">{{toTime(postTime)}}</span>发表于 通知公告</span></div>
             </div>
         </div>
     </div>
@@ -24,7 +24,8 @@
         methods:{
             // 时间转换
             toTime(time){
-                var date=new Date(time)
+                let str = time.toString().substr(0, 8)  // 获取时间戳
+                let date=new Date(Number(parseInt(str, 16).toString() + '000'))
                 return formatDate(date,'yyyy-MM-dd')
             },
         },

@@ -10,20 +10,23 @@ Vue.config.productionTip = false
 Vue.prototype.global = global
 
 import tips from './assets/js/tips.js'
-Vue.use(tips);
+Vue.use(tips)
 
 import common from './assets/js/common.js'
-Vue.use(common);
+Vue.use(common)
 
 import $ from 'jquery'
 
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
-Vue.use(ElementUI);
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+Vue.use(ElementUI)
 
 import 'swiper/dist/css/swiper.css'
 import VueAwesomeSwiper from 'vue-awesome-swiper'
-Vue.use(VueAwesomeSwiper);
+Vue.use(VueAwesomeSwiper)
+
+import axios from 'axios'
+Vue.prototype.$http = axios
 
 /* eslint-disable no-new */
 new Vue({

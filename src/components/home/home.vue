@@ -9,23 +9,23 @@
             </div>
             <div class="carousel fl" @mouseenter="mouseOnCarousel=true" @mouseleave="mouseOnCarousel=false">
                 <swiper :options="swiperOption"  ref="mySwiper" id="myCarousel">
-                    <!-- 这部分放要渲染的那些内容 -->  
-                    <swiper-slide v-for="(slide,key) in slides" :key="key">  
+                    <!-- 这部分放要渲染的那些内容 -->
+                    <swiper-slide v-for="(slide,key) in slides" :key="key">
                         <img :src="slide" style="width:750px;height:300px;">
-                    </swiper-slide>  
-                    <!-- 这是轮播的小圆点 -->  
-                    <div class="swiper-pagination" slot="pagination"></div> 
+                    </swiper-slide>
+                    <!-- 这是轮播的小圆点 -->
+                    <div class="swiper-pagination" slot="pagination"></div>
                     <!-- 上下 -->
                     <div class="swiper-button-prev swiper-button-white" slot="button-prev" v-show="mouseOnCarousel"></div>
-                    <div class="swiper-button-next swiper-button-white" slot="button-next" v-show="mouseOnCarousel"></div> 
-                </swiper> 
+                    <div class="swiper-button-next swiper-button-white" slot="button-next" v-show="mouseOnCarousel"></div>
+                </swiper>
             </div>
             <div class="announcement fl">
                 <div class="title">最新公告</div>
                 <ul class="aList">
-                    <li class="aItem clearfix" @click="$goRoute('/postDetails','postTitle', item.title, 'postContent', item.content, 'postTime', item.createDate)" v-for="item in list">
-                        <span class="aContent fl">{{item.title}}</span>
-                        <span class="aTime fr">{{item.createDate != null ? toTime(item.createDate) : ''}}</span>
+                    <li class="aItem clearfix" @click="$goRoute('/postDetails','postTitle', item.noticeTitle, 'postContent', item.noticeContent, 'postTime', item._id)" v-for="item in list">
+                        <span class="aContent fl">{{item.noticeTitle}}</span>
+                        <span class="aTime fr">{{toTime(item._id)}}</span>
                     </li>
                 </ul>
             </div>
@@ -42,7 +42,7 @@
         data(){
             return{
                 // 轮播图数据
-                swiperOption: {  
+                swiperOption: {
                     pagination: {
                         el: '.swiper-pagination',
                         clickable:true
@@ -53,24 +53,24 @@
                     },
                     //开启无限循环
                     loop:true,
-                    // slidesPerView: 'auto',  
+                    // slidesPerView: 'auto',
                     centeredSlides: true,
-                    //设置点击箭头  
-                    paginationClickable: true, 
+                    //设置点击箭头
+                    paginationClickable: true,
                     prevButton:'.swiper-button-prev',
-                    nextButton:'.swiper-button-next', 
+                    nextButton:'.swiper-button-next',
                     // 图片之间的间隙
-                    // spaceBetween: 30,  
-                    onSlideChangeEnd: swiper => {  
-                        //这个位置放swiper的回调方法  
-                        this.page = swiper.realIndex+1;  
-                        this.index = swiper.realIndex;  
-                    }, 
+                    // spaceBetween: 30,
+                    onSlideChangeEnd: swiper => {
+                        //这个位置放swiper的回调方法
+                        this.page = swiper.realIndex+1;
+                        this.index = swiper.realIndex;
+                    },
                     navigation: {
                         nextEl: '.swiper-button-next',
                         prevEl: '.swiper-button-prev'
                     }
-                }, 
+                },
                 slides:['./static/carousel1.jpg', './static/carousel2.jpg', './static/carousel3.jpg'],
                 mouseOnCarousel: false,
                 list: [],   // 公告列表
@@ -82,35 +82,19 @@
         methods:{
             // 获取公告
             getAnnouncement () {
-                var self = this;
-                var myData = new FormData();
-                myData.append('pageSize', this.pageSize);
-                myData.append('pageNum', this.pageNum);
-                $.ajax({
-                    url: self.global.BASE_URL+'/salmon/notice/list.action',
-                    type: 'post',
-                    data: myData,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        if(res.code === self.global.SUCCESS_CODE) {
-                            self.list = res.data.noticeList;
-                        } else {
-                            self.$Tips2(res.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
+                this.$http.get('/notices').then((res) => {
+                    if (res.data.status == '0') {
+                        this.list = res.data.result.list;
+                        console.log(this.list);
+                    } else {
+                        this.$Tips2(res.data.msg);
+                     }
                 })
             },
             // 时间转换
             toTime(time){
-                var date=new Date(time)
+                let str = time.toString().substr(0, 8)  // 获取时间戳
+                let date=new Date(Number(parseInt(str, 16).toString() + '000'))
                 return formatDate(date,'yyyy-MM-dd')
             },
         },
@@ -197,7 +181,7 @@
         background-color: #fff;
         border-radius: 5px;
         box-shadow: 0 -4px 8px 0 rgba(7,17,27,.1);
-    } 
+    }
     .bottom img {
         width: 100%;
         border-radius: 5px;

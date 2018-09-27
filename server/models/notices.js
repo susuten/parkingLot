@@ -10,4 +10,4 @@ let noticeSchema = new Schema({
   "adminName": String
 });
 
-module.exports = mongoose.model('Notice',noticeSchema)
+module.exports = mongoose.model('Notice',noticeSchema);

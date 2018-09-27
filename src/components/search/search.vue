@@ -41,7 +41,7 @@
                 isLogin: false, // 是否已经登录
                 parkList: [],
 
-                pageSize: 14,
+                pageSize: 7,
                 pageNum: 1,
                 total: 10,
 
@@ -59,37 +59,20 @@
                 var self = this;
                 var carData = new FormData();
                 carData.append('parkStatus', this.type);
-            
+
                 carData.append('pageSize', this.pageSize);
                 carData.append('pageNum', this.pageNum);
-                
-                $.ajax({
-                    url: self.global.BASE_URL+'/salmon/vspark/list.action',
-                    type: 'post',
-                    data: carData,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        if(res.code === self.global.SUCCESS_CODE) {
-                            self.parkList = res.data.parkList;
-                            self.total = res.data.pageBean.count;
-                            console.log(22,self.parkList);
-                        } else {
-                            self.$Tips2(res.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
+                this.$http.get('/parks').then((res) => {
+                    if (res.data.status == '0') {
+                        this.parkList = res.data.result.list;
+                        console.log(this.parkList);
+                    } else {
+                        this.$Tips2(res.data.message);
                     }
                 })
-
             },
             changeSelect () {
-                this.pageSize = 14;
+                this.pageSize = 7;
                 this.pageNum = 1;
                 this.total = 10;
                 this.getParkList();
