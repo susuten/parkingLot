@@ -56,13 +56,14 @@
             },
             // 获取车位列表
             getParkList() {
-                var self = this;
-                var carData = new FormData();
-                carData.append('parkStatus', this.type);
-
-                carData.append('pageSize', this.pageSize);
-                carData.append('pageNum', this.pageNum);
-                this.$http.get('/parks').then((res) => {
+                let params = {
+                    pageNum: this.pageNum,
+                    pageSize: this.pageSize,
+                    parkStatus: this.type
+                };
+                this.$http.get('/parks', {
+                    params: params
+                }).then((res) => {
                     if (res.data.status == '0') {
                         this.parkList = res.data.result.list;
                         console.log(this.parkList);
