@@ -12,11 +12,11 @@
             <ul class="carList clearfix">
                 <li class="carItem fl" v-for="parkItem in parkList">
                     <div class="carBox">
-                        <img class="empty" src="../../../static/cw.png" height="165" width="117" alt="" v-show="parkItem.status==0" @click="$goRoute('/details','parkId',parkItem.id)"/>
-                        <img class="noEmpty" src="../../../static/cw2.png" height="165" width="117" alt="" v-show="parkItem.status==1"/>
+                        <img class="empty" src="../../../static/cw.png" height="165" width="117" alt="" v-show="parkItem.parkStatus==0" @click="$goRoute('/details','parkId',parkItem._id)"/>
+                        <img class="noEmpty" src="../../../static/cw2.png" height="165" width="117" alt="" v-show="parkItem.parkStatus==1"/>
                     </div>
-                    <div class="carName">{{parkItem.name}}</div>
-                    <div class="carCost">￥{{parkItem.price}}</div>
+                    <div class="carName">{{parkItem.parkName}}</div>
+                    <div class="carCost">￥{{parkItem.parkPrice}}</div>
                 </li>
                 <!-- <li class="carItem fl">
                     <div class="carBox">
@@ -66,7 +66,7 @@
                 }).then((res) => {
                     if (res.data.status == '0') {
                         this.parkList = res.data.result.list;
-                        console.log(this.parkList);
+                        this.total = res.data.result.total;
                     } else {
                         this.$Tips2(res.data.message);
                     }

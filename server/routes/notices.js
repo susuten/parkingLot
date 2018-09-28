@@ -4,7 +4,7 @@ let mongoose = require('mongoose');
 let Notices = require('../models/notices');
 
 //连接MongoDB数据库
-mongoose.connect('mongodb://127.0.0.1:27017/park');
+mongoose.connect('mongodb://127.0.0.1:27017/park',{ useNewUrlParser: true });
 // mongoose.connect('mongodb://root:123456@127.0.0.1:27017/park');
 
 mongoose.connection.on('connected', function() {

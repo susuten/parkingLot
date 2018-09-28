@@ -31,44 +31,25 @@
                 if(this.name == '') {
                     this.$Tips2("请输入用户名");
                     return;
-                } 
+                }
                 if(this.password == '') {
                     this.$Tips2("请输入登录密码");
                     return;
                 }
-                var self = this;
-                var loginData = new FormData();
-                loginData.append('name', this.name);
-                loginData.append('password', this.password);
-                $.ajax({
-                    url: self.global.BASE_URL+'/us/salmon/user/login.action',
-                    type: 'post',
-                    data: loginData,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        if(res.code === self.global.SUCCESS_CODE) {
-                            sessionStorage.setItem('userName',res.data.user.name);
-                            self.$store.commit('storeName',res.data.user.name)
-                            sessionStorage.setItem('userId',res.data.user.id);
-                            sessionStorage.setItem('isLogin', true);
-                            self.$router.push('/home');
-                        } else {
-                            self.$Tips2(res.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
+                this.$http.post("/user/login", {
+                    userName: this.name,
+                    userPwd: this.password
+                }).then((res) => {
+                    if (res.data.status == "0") {
+
+                    } else {
+                        this.$Tips2(res.data.msg);
                     }
                 })
             },
         },
         created(){
-            
+
         }
     }
 </script>
@@ -78,7 +59,7 @@
         height: 100%;
         background: url(../../../static/login_bg.jpg) no-repeat;
          -webkit-background-size: 100% 100%;
-        background-size: 100% 100%; 
+        background-size: 100% 100%;
         position: relative;
     }
     .login {

@@ -3,7 +3,7 @@ let router = express.Router();
 let mongoose = require('mongoose');
 let Parks = require('../models/parks');
 
-mongoose.connect('mongodb://123.0.0.1:27017/park');
+mongoose.connect('mongodb://123.0.0.1:27017/park', { useNewUrlParser: true });
 
 mongoose.connection.on('connected', function () {
     console.log('MongoDB connected success.');
@@ -24,23 +24,57 @@ router.get("/", function (req, res, next) {
     if (parkStatus == '1' || parkStatus == '0') {
         params = {'parkStatus':parkStatus};
     }
+    let getParksTotalModel = Parks.find(params);
+    let total = 0; // 总条数
     let parksModel = Parks.find(params).skip(skip).limit(pageSize); // 分页：跳过skip条数据再去拿pageSize条数据
-    parksModel.exec({}, function (err, doc) {
+    getParksTotalModel.exec({}, function (err, doc) {
+        if (err) {
+            console.log(err.message);
+        } else {
+            total = doc.length;
+            if (total) {
+                parksModel.exec({}, function (err, doc) {
+                    if(err) {
+                        res.json ({
+                            status: '1',
+                            msg: err.message
+                        });
+                    } else {
+
+                        console.log(2,total);
+                        res.json ({
+                            status: '0',
+                            msg: '',
+                            result: {
+                                count: doc.length,
+                                total:total,
+                                list: doc
+                            }
+                        });
+                    }
+                });
+            }
+        }
+    });
+    /*parksModel.exec({}, function (err, doc) {
         if(err) {
             res.json ({
                 status: '1',
                 msg: err.message
             });
         } else {
+
+            console.log(2,total);
             res.json ({
                 status: '0',
                 msg: '',
                 result: {
                     count: doc.length,
+                    total:total,
                     list: doc
                 }
-            })
+            });
         }
-    });
+    });*/
 });
 module.exports = router;
