@@ -15,7 +15,8 @@ mongoose.connection.on('disconnected', function () {
     console.log('MongoDB connected disconnected.');
 });
 
-router.get("/", function (req, res, next) {
+// 获取车位列表
+router.get("/list", function (req, res, next) {
     let pageNum = parseInt(req.param('pageNum'));
     let pageSize = parseInt(req.param('pageSize'));
     let parkStatus = req.param('parkStatus'); // 1为已约，0为未约，3为全部
@@ -56,25 +57,10 @@ router.get("/", function (req, res, next) {
             }
         }
     });
-    /*parksModel.exec({}, function (err, doc) {
-        if(err) {
-            res.json ({
-                status: '1',
-                msg: err.message
-            });
-        } else {
+});
 
-            console.log(2,total);
-            res.json ({
-                status: '0',
-                msg: '',
-                result: {
-                    count: doc.length,
-                    total:total,
-                    list: doc
-                }
-            });
-        }
-    });*/
+// 获取车位信息
+router.post('/details', function(req, res, next) {
+
 });
 module.exports = router;

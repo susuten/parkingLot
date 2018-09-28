@@ -77,8 +77,15 @@
                 var date=new Date(time)
                 return formatDate(date,'yyyy-MM-dd')
             },
-            // 获取订单列表 /us/salmon/orders/list.action
+            // 获取订单列表
             getOrders () {
+                this.$http("/users/orders/list").then((res) => {
+                    if (res.data.status == '0') {
+                        this.ordersList = res.data.result.orderList
+                    }
+                })
+            },
+            /*getOrders () {
                 console.log("获取订单");
                 var self = this;
                 var userData = new FormData();
@@ -106,7 +113,7 @@
                         console.log(error);
                     }
                 })
-            },
+            },*/
             justForTest() {
                 console.log("justForTest");
             },

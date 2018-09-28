@@ -62,8 +62,43 @@
                 })
             },
             // 添加订单
+            /*addOrders() {
+                if (this.isLogin == false) {
+                    console.log(88, this.isLogin);
+                    this.$Tips2("请先登录");
+                    return;
+                }
+                var self = this;
+                var myData = new FormData();
+                myData.append('userId', this.userId);
+                myData.append('parkId', this.parkId);
+                myData.append('total', this.details.price);
+                $.ajax({
+                    url: self.global.BASE_URL+'/us/salmon/orders/add.action',
+                    type: 'post',
+                    data: myData,
+                    xhrFields: {
+                        withCredentials: true
+                    },
+                    crossDomain: true,
+                    contentType: false,
+                    processData: false,
+                    success: function(res) {
+                        if(res.code === self.global.SUCCESS_CODE) {
+                            self.$goRoute('/person/orders');
+                        } else {
+                            self.$Tips2(res.message);
+                        }
+                    },
+                    error: function(error) {
+                        console.log(error);
+                    }
+                })
+            },*/
+            // 添加订单
             addOrders() {
                 if (this.isLogin == false) {
+                    console.log(88, this.isLogin);
                     this.$Tips2("请先登录");
                     return;
                 }
@@ -94,34 +129,6 @@
                     }
                 })
             },
-            showMap () {
-                let map = new BMap.Map("allmap");
-                // 创建地图实例  
-                var point = new BMap.Point(116.404, 39.915);
-                // 创建点坐标  
-                map.centerAndZoom(point, 15);
-                // 初始化地图，设置中心点坐标和地图级别  
-            },
-            showMap2 () {
-                let map = new BMap.Map("allmap");    
-                let point = new BMap.Point(116.404, 39.915);    
-                map.centerAndZoom(point, 15);    
-                // window.setTimeout(function(){  
-                //     map.panTo(new BMap.Point(116.409, 39.918));    
-                // }, 2000);
-                setTimeout(function(){
-                    map.panTo(new BMap.Point(113.262232,23.154345));   //两秒后移动到广州
-                }, 2000);
-                //添加地图类型控件
-                map.addControl(new BMap.MapTypeControl({
-                    mapTypes:[
-                        BMAP_NORMAL_MAP,
-                        BMAP_HYBRID_MAP
-                    ]}));     
-                // map.setCurrentCity("广州");          // 设置地图显示的城市 此项是必须设置的
-                // map.centerAndZoom("广州");
-                map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
-            },
             // 根据浏览器定位
             showMap3() {
                 // 百度地图API功能
@@ -139,27 +146,9 @@
                     }
                     else {
                         self.$Tips2('failed'+this.getStatus());
-                    }        
+                    }
                 },{enableHighAccuracy: true})
             },
-            // 根据经纬度定位
-            showMap4 () {
-                // 百度地图API功能
-                let map = new BMap.Map("allmap");
-                map.centerAndZoom(new BMap.Point(116.331398,39.897445),11);
-                map.enableScrollWheelZoom(true);
-                // 用经纬度设置地图中心点
-                function theLocation(){
-                    if(document.getElementById("longitude").value != "" && document.getElementById("latitude").value != ""){
-                        map.clearOverlays(); 
-                        let new_point = new BMap.Point(document.getElementById("longitude").value,document.getElementById("latitude").value);
-                        let marker = new BMap.Marker(new_point);  // 创建标注
-                        map.addOverlay(marker);              // 将标注添加到地图中
-                        map.panTo(new_point);      
-                    }
-                }
-            }
-
         },
         created() {
             this.parkId = sessionStorage.getItem('parkId');
@@ -171,12 +160,8 @@
             this.getDetails();
         },
         mounted(){
-          // this.map()
           this.showMap3()
         }
-        /*components: {
-            Map,
-        }*/
     }
 </script>
 <style scoped>
@@ -215,5 +200,5 @@
         line-height: 48px;
     }
     p{margin-left:5px; font-size:14px;}
-    
+
 </style>

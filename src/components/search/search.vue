@@ -61,7 +61,7 @@
                     pageSize: this.pageSize,
                     parkStatus: this.type
                 };
-                this.$http.get('/parks', {
+                this.$http.get('/parks/list', {
                     params: params
                 }).then((res) => {
                     if (res.data.status == '0') {

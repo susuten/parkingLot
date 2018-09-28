@@ -27,7 +27,6 @@
                 </div>
             </div>
         </div>
-        
     </div>
 </template>
 
@@ -43,33 +42,18 @@
         methods:{
            // 退出登录
            logout () {
-                var self = this;
-                $.ajax({
-                    url: self.global.BASE_URL+'/cancle.action',
-                    type: 'post',
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        if(res.code === self.global.SUCCESS_CODE) {
-                            sessionStorage.removeItem('userName');
-                            sessionStorage.removeItem('userId');
-                            sessionStorage.removeItem('isLogin');
-                            self.$store.commit('storeName','')
-                            self.showLogoutModal();
-                            self.$router.push('/login');
-                            
-                        } else {
-                            self.$Tips2(res.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
+               this.$http.post('/users/logout').then((res) => {
+                    if (res.data.status == "0") {
+                        sessionStorage.removeItem('userName');
+                        sessionStorage.removeItem('userId');
+                        sessionStorage.removeItem('isLogin');
+                        this.$store.commit('storeName','')
+                        this.showLogoutModal();
+                        this.$router.push('/login');
+                    } else {
+                        this.$Tips2(res.data.message);
                     }
-                })
+               })
            },
            // 控制显示退出登录模态框
            showLogoutModal() {
@@ -88,6 +72,7 @@
                 return this.$store.state.userName
             }
         },
+
     }
 </script>
 <style scoped>
@@ -123,6 +108,11 @@
     .user li:hover {
         color: #666;
         background-color: #f1eded;
+        -webkit-transition: all .5s ease-out;
+        -moz-transition: all .5s ease-out;
+        -ms-transition: all .5s ease-out;
+        -o-transition: all .5s ease-out;
+        transition: all .5s ease-out;
     }
     .user .noPointer {
         cursor: default;

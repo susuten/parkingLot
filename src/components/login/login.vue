@@ -36,12 +36,16 @@
                     this.$Tips2("请输入登录密码");
                     return;
                 }
-                this.$http.post("/user/login", {
+                this.$http.post("/users/login", {
                     userName: this.name,
                     userPwd: this.password
                 }).then((res) => {
                     if (res.data.status == "0") {
-
+                        sessionStorage.setItem('userName', res.data.result.userName);
+                        this.$store.commit('storeName',res.data.result.userName);
+                        sessionStorage.setItem('userId', res.data.result.userId);
+                        sessionStorage.setItem('isLogin', true);
+                        this.$router.push('/home');
                     } else {
                         this.$Tips2(res.data.msg);
                     }

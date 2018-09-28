@@ -165,6 +165,11 @@
     }
     .aItem:hover {
         background-color: #F4F7FC;
+        -webkit-transition: all .3s ease-in-out;
+        -moz-transition: all .3s ease-in-out;
+        -ms-transition: all .3s ease-in-out;
+        -o-transition: all .3s ease-in-out;
+        transition: all .3s ease-in-out ;
     }
     .aContent {
         font-size: 12px;

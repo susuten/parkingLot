@@ -1,4 +1,4 @@
-/* 
+/*
 * @Author: susuten
 * @Date:   2018-09-04 10:34:42
 * @Last Modified by:   susuten
@@ -11,8 +11,10 @@
     top: 0;
     left: 0;
     background-color: rgba(0,0,0,0.5);
-     overflow: auto;
-     z-index: 999;
+    overflow: auto;
+    z-index: 999;
+    animation:myanimation .3s;
+    -webkit-animation:myanimation .3s;
 }
 .modalBox{
     padding:24px;
@@ -73,4 +75,21 @@
     padding-left: 10px;
     border-radius: 2px;
     background-color: #f5f5f5;
+}
+/*css3 动画*/
+@keyframes myanimation {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
+}
+@-webkit-keyframes myanimation {
+    from {
+        transform: scale(0);
+    }
+    to {
+        transform: scale(1);
+    }
 }

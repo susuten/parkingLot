@@ -26,6 +26,25 @@ app.use('/users', usersRouter);
 app.use('/notices', noticesRouter);
 app.use('/parks', parksRouter);
 
+// 登录拦截
+app.use(function(req, res, nex) {
+    if (req.cookies.userId) {
+        next();
+    } else {
+        // 设置白名单，即未登录也可以调用
+        // if (req.originalUrl == '/users/login' || req.originalUrl == '/users/logout' || req.originalUrl.indexOf('/parks/list') > -1) {
+        if (req.originalUrl == '/users/login' || req.originalUrl == '/users/logout' || req.path == '/parks/list') {
+            next();
+        } else {
+            res.json({
+                status: '10001',
+                msg: '当前未登录',
+                result: ''
+            });
+        }
+    }
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
