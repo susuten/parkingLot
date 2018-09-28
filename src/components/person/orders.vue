@@ -5,9 +5,9 @@
            <table class="ordersTable">
                <tr>
                    <th>订单编号</th>
-                   <th>下单时间</th>
-                   <th>车牌号</th>
-                   <th>车位编号</th>
+                   <!--<th>下单时间</th>-->
+                   <!--<th>车牌号</th>-->
+                   <!--<th>车位编号</th>-->
                    <th>车位价格</th>
                    <th>应付金额</th>
                    <th>状态</th>
@@ -15,19 +15,18 @@
                </tr>
                <tr v-for="orderItem in ordersList">
                    <td>{{orderItem.code}}</td>
-                   <td>{{orderItem.createDate != null ? toTime(orderItem.createDate) : ''}}</td>
-                   <td>{{orderItem.user.plateNum}}</td>
-                   <td>{{orderItem.park.name}}</td>
+                   <!--<td>{{orderItem.createDate != null ? toTime(orderItem.createDate) : ''}}</td>-->
+                   <!--<td>{{orderItem.user.plateNum}}</td>-->
+                   <!--<td>{{orderItem.park.name}}</td>-->
                    <td class="redColor">￥{{orderItem.total}}</td>
                    <td class="redColor">￥{{orderItem.total}}</td>
                    <td>
-                        <span v-if="orderItem.status===0" class="redColor">待付款</span>
-                        <span v-if="orderItem.status===1" class="orangeColor">订单完成</span>
+                        <span v-if="orderItem.status=='0'" class="redColor">待付款</span>
+                        <span v-if="orderItem.status=='1'" class="orangeColor">订单完成</span>
                    </td>
                    <td>
-                        <div v-if="orderItem.status===0" @click="showUpdateModal(orderItem.id)">结算</div>
-                        <!-- <div v-if="orderItem.status===0" @click="updateOrders(orderItem.id)">结算</div> -->
-                        <div v-if="orderItem.status===1" @click="showDeleteModal(orderItem.id)">删除</div>
+                        <div v-if="orderItem.status=='0'" @click="showUpdateModal(orderItem.orderId)">结算</div>
+                        <div v-if="orderItem.status=='1'" @click="showDeleteModal(orderItem.orderId)">删除</div>
                    </td>
                </tr>
            </table>
@@ -79,45 +78,16 @@
             },
             // 获取订单列表
             getOrders () {
-                this.$http("/users/orders/list").then((res) => {
+                this.$http.post("/users/orders/list").then((res) => {
+                    console.log("status:" + res.data.status)
                     if (res.data.status == '0') {
-                        this.ordersList = res.data.result.orderList
+                        this.ordersList = res.data.result
+                        console.log(99, this.ordersList);
                     }
                 })
             },
-            /*getOrders () {
-                console.log("获取订单");
-                var self = this;
-                var userData = new FormData();
-                userData.append('userId',this.userId);
-                $.ajax({
-                    url: self.global.BASE_URL+'/us/salmon/orders/list.action',
-                    type: 'post',
-                    data: userData,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        console.log(77, res);
-                        if(res.code === self.global.SUCCESS_CODE) {
-                            self.ordersList = res.data.noticeList;
-                            console.log(88,res.data.noticeList);
-                        } else {
-                            self.$Tips2(res.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                })
-            },*/
-            justForTest() {
-                console.log("justForTest");
-            },
-            // 结算订单
+
+            // 订单结算
             updateOrders() {
                 var self = this;
                 var myData = new FormData();
@@ -149,6 +119,19 @@
 
             // 删除订单
             deleteOrders () {
+                this.$http.post('/users/orders/delete',{
+                    orderId: this.orderId
+                }).then((res) => {
+                    if (res.data.status === '0') {
+                        this.$Tips1("删除订单成功");
+                        this.showDeleteModal();
+                        this.getOrders();
+                    } else {
+                        this.$Tips2(res.message);
+                    }
+                })
+            },
+            /*deleteOrders () {
                 var self = this;
                 var myData = new FormData();
                 myData.append('id', this.orderId);
@@ -175,7 +158,7 @@
                         console.log(error);
                     }
                 })
-            },
+            },*/
             // 控制显示结算订单模态框
             showDeleteModal(orderId) {
                 this.deleteModal = !this.deleteModal;
@@ -194,9 +177,6 @@
         created(){
           this.userId = sessionStorage.getItem('userId');
           this.getOrders();
-          console.log("你执行了吗？")
-          this.justForTest();
-
         },
     }
 </script>

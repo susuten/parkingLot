@@ -27,7 +27,7 @@ app.use('/notices', noticesRouter);
 app.use('/parks', parksRouter);
 
 // 登录拦截
-app.use(function(req, res, nex) {
+app.use(function(req, res, next) {
     if (req.cookies.userId) {
         next();
     } else {

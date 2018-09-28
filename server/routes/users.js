@@ -57,6 +57,7 @@ router.post("/logout", function (req, res, next) {
 
 // 获取订单列表
 router.post('/orders/list', function (req, res, next) {
+    console.log("获取订单列表");
     let userId = req.cookies.userId;
     User.findOne({userId:userId}, function(err, doc) {
         if (err) {
@@ -89,7 +90,29 @@ router.post('/orders/update', function (req, res, next) {
 
 // 删除订单
 router.post('/orders/delete', function (req, res, next) {
-
+    let userId = req.cookies.userId;
+    let orderId = req.body.orderId;
+    User.update({userId:userId},{
+        $pull:{
+            'orderList':{
+                'orderId': orderId
+            }
+        }
+    }, function (err, doc) {
+        if (err) {
+            res.json ({
+                status: '1',
+                msg: err.message,
+                result: ''
+            })
+        } else {
+            res.json ({
+                status: '0',
+                msg: '',
+                result: ''
+            })
+        }
+    });
 });
 
 // 获取用户留言
