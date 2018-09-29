@@ -1,3 +1,5 @@
+// status: 0 请求成功   1 请求失败    2 其他类型错误
+
 var express = require('express');
 var router = express.Router();
 
@@ -36,6 +38,12 @@ router.post("/login", function (req, res, next) {
                        userName: doc.userName,
                        userId: doc.userId
                    }
+               })
+           } else {
+               res.json ({
+                   status: '2',
+                   msg: '账号或密码错误',
+                   result: ''
                })
            }
        }
@@ -132,11 +140,96 @@ router.post('/message/delete', function (req, res, next) {
 
 // 获取用户信息
 router.post('/get', function (req, res, next) {
-
+    let userId = req.cookies.userId;
+    User.findOne({userId:userId}, function (err, doc) {
+        if (err) {
+            res.json({
+                status: '1',
+                msg: err.message,
+                result: ''
+            })
+        } else {
+            res.json({
+                status: '0',
+                msg: '',
+                result: doc
+            })
+        }
+    })
 });
 
 // 用户信息更新
 router.post('/update', function (req, res, next) {
+    let userId = req.cookies.userId,
+        userName = req.body.userName,
+        phone= req.body.phone,
+        plateNum = req.body.plateNum;
+    User.update({"userId":userId}, {
+        "userName": userName,
+        "phone": phone,
+        "plateNum": plateNum
+    }, function (err, doc) {
+        if (err) {
+            res.json ({
+                status: '1',
+                msg: err.message,
+                result: ''
+            })
+        } else {
+            res.json({
+                status: '0',
+                msg: '',
+                result: 'success'
+            })
+        }
+    })
+});
+
+// 修改密码
+router.post('/updatePwd', function (req, res, next) {
+    let userId = req.cookies.userId,
+        oldPw = req.body.oldPw,
+        newPw = req.body.newPw;
+        console.log(oldPw, newPw);
+    User.findOne({userId:userId}, function (err, doc) {
+        if (err) {
+            res.json ({
+                status: '1',
+                msg: err.message,
+                result: ''
+            })
+        } else {
+            if (doc.userPwd == oldPw) { // 原密码输入正确
+                // 更新密码
+                User.update({userId:userId},{
+                    $set:{
+                        userPwd: newPw
+                    }
+                }, function (err, doc) {
+                    if (err) {
+                        res.json({
+                            status: '1',
+                            msg: err.message,
+                            result: ''
+                        });
+                    } else {
+                        res.json({
+                           status: '0',
+                           msg: '',
+                           result: 'success'
+                        });
+                    }
+                });
+            } else {    // 原密码输入错误
+                res.json({
+                    status: '2',
+                    msg: '原密码输入错误',
+                    result: ''
+                })
+            }
+
+        }
+    })
 
 });
 

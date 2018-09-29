@@ -4,7 +4,7 @@
        <div class="content">
            <div class="userMsg">
                <span class="userMsgTitle">用户名：</span>
-               <span class="userMsgContent">{{userMsg.name}}</span>
+               <span class="userMsgContent">{{userMsg.userName}}</span>
            </div>
            <div class="userMsg">
                <span class="userMsgTitle">用户积分：</span>
@@ -32,7 +32,7 @@
                 <div class="modalContent2">
                     <div class="modalContentItem">
                         <span>用户名</span>
-                        <input type="text" placeholder="请输入用户名" v-model="modUserMsg.name"/>
+                        <input type="text" placeholder="请输入用户名" v-model="modUserMsg.userName"/>
                     </div>
                     <div class="modalContentItem">
                         <span>联系电话</span>
@@ -65,40 +65,46 @@
         methods:{
             // 获取用户信息
             getUserMsg () {
-                var self = this;
-                var userData = new FormData();
-                userData.append('id', this.userId);
-                $.ajax({
-                    url: self.global.BASE_URL+'/us/salmon/user/get.action',
-                    type: 'post',
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    data: userData,
-                    crossDomain: true,
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        if(res.code === self.global.SUCCESS_CODE) {
-                            self.userMsg = res.data.user;
-                            sessionStorage.setItem('user', res.data.user);
-                            sessionStorage.setItem('userName',res.data.user.name);
-                        } else {
-                            self.$Tips2(res.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
+                this.$http.post('/users/get').then((res) => {
+                    if (res.data.status === '0') {
+                        this.userMsg = res.data.result;
+                        console.log(res.data.result)
+                        sessionStorage.setItem('user', res.data.result);
+                        sessionStorage.setItem('userName',res.data.result.userName);
+                    } else {
+                        this.$Tips2(res.data.msg);
                     }
-                })
+                });
             },
+
             // 控制显示隐藏修改模态框
             showModifyModal () {
                 this.modUserMsg = this.deepCopy(this.userMsg);
+                console.log(33, this.modUserMsg);
                 this.modifyModal = !this.modifyModal;
             },
             // 修改
             modify () {
+                console.log("进入修改");
+                console.log(22, this.modUserMsg);
+                this.$http.post('/users/update', {
+                    userName: this.modUserMsg.userName,
+                    phone: this.modUserMsg.phone,
+                    plateNum: this.modUserMsg.plateNum
+                }).then((res) => {
+                    if (res.data.status === '0') {
+                        console.log("修改成功");
+                        this.$Tips1("修改成功");
+                        sessionStorage.setItem('userName',this.modUserMsg.userName);
+                        this.$store.commit('storeName',this.modUserMsg.userName)
+                        this.getUserMsg();
+                        this.showModifyModal();
+                    } else {
+                        this.$Tips2(res.data.msg);
+                    }
+                })
+            },
+            /*modify () {
                 var self = this;
                 var modData = new FormData();
                 modData.append('id', this.modUserMsg.id);
@@ -130,7 +136,7 @@
                         console.log(error);
                     }
                 })
-            },
+            },*/
             // 深度拷贝
             deepCopy(source) {
                 var sourceCopy = {}

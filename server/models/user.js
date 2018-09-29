@@ -4,6 +4,9 @@ let userSchema = new mongoose.Schema({
     "userId": String,
     "userName": String,
     "userPwd": String,
+    "phone": String,
+    "plateNum": String,
+    "point": String,
     "orderList": Array,
     "messageList": Array
 });
