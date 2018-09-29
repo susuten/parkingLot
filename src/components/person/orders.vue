@@ -18,8 +18,8 @@
                    <!--<td>{{orderItem.createDate != null ? toTime(orderItem.createDate) : ''}}</td>-->
                    <!--<td>{{orderItem.user.plateNum}}</td>-->
                    <!--<td>{{orderItem.park.name}}</td>-->
-                   <td class="redColor">￥{{orderItem.total}}</td>
-                   <td class="redColor">￥{{orderItem.total}}</td>
+                   <td class="redColor">{{orderItem.total | currency('￥')}}</td>
+                   <td class="redColor">{{orderItem.total | currency('￥')}}</td>
                    <td>
                         <span v-if="orderItem.status=='0'" class="redColor">待付款</span>
                         <span v-if="orderItem.status=='1'" class="orangeColor">订单完成</span>
@@ -59,7 +59,8 @@
 </template>
 
 <script>
-    import {formatDate} from '../../assets/js/date.js'
+    import {formatDate} from '../../assets/js/date'
+    import {currency} from '../../assets/js/currency'
     export default{
         data(){
             return{
@@ -173,6 +174,10 @@
                     this.orderId = orderId;
                 }
            }
+        },
+        // 过滤器
+        filters: {
+            currency: currency
         },
         created(){
           this.userId = sessionStorage.getItem('userId');

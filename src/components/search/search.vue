@@ -12,7 +12,7 @@
             <ul class="carList clearfix">
                 <li class="carItem fl" v-for="parkItem in parkList">
                     <div class="carBox">
-                        <img class="empty" src="../../../static/cw.png" height="165" width="117" alt="" v-show="parkItem.parkStatus==0" @click="$goRoute('/details','parkId',parkItem._id)"/>
+                        <img class="empty" src="../../../static/cw.png" height="165" width="117" alt="" v-show="parkItem.parkStatus==0" @click="$goRoute('/details','parkId',parkItem.parkId, 'parkName', parkItem.parkName, 'parkPrice', parkItem.parkPrice)"/>
                         <img class="noEmpty" src="../../../static/cw2.png" height="165" width="117" alt="" v-show="parkItem.parkStatus==1"/>
                     </div>
                     <div class="carName">{{parkItem.parkName}}</div>
@@ -41,7 +41,7 @@
                 isLogin: false, // 是否已经登录
                 parkList: [],
 
-                pageSize: 7,
+                pageSize: 14,
                 pageNum: 1,
                 total: 10,
 
@@ -73,7 +73,7 @@
                 })
             },
             changeSelect () {
-                this.pageSize = 7;
+                this.pageSize = 14;
                 this.pageNum = 1;
                 this.total = 10;
                 this.getParkList();

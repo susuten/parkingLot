@@ -5,28 +5,26 @@ import App from './App'
 import router from './router'
 import global from './global.vue'
 import store from './store'
+import tips from './assets/js/tips.js'
+import common from './assets/js/common.js'
+import $ from 'jquery'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
+import 'swiper/dist/css/swiper.css'
+import VueAwesomeSwiper from 'vue-awesome-swiper'
+import axios from 'axios'
+import {currency} from './assets/js/currency'  // 带有名字的导出需要加上{}  金额格式化 小数点 逗号
 
 Vue.config.productionTip = false
 Vue.prototype.global = global
+Vue.prototype.$http = axios
 
-import tips from './assets/js/tips.js'
 Vue.use(tips)
-
-import common from './assets/js/common.js'
 Vue.use(common)
-
-import $ from 'jquery'
-
-import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-chalk/index.css'
 Vue.use(ElementUI)
-
-import 'swiper/dist/css/swiper.css'
-import VueAwesomeSwiper from 'vue-awesome-swiper'
 Vue.use(VueAwesomeSwiper)
 
-import axios from 'axios'
-Vue.prototype.$http = axios
+Vue.filter("currency", currency)
 
 /* eslint-disable no-new */
 new Vue({

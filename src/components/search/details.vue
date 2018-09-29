@@ -8,8 +8,8 @@
                 <div id="allmap"></div>
             </div>
             <div class="mapMsg fl">
-                <div class="msg1">车位编号：{{details.name}}</div>
-                <div class="msg2">价格：<span class="money">￥{{details.price}}</span></div>
+                <div class="msg1">车位编号：{{parkName}}</div>
+                <div class="msg2">价格：<span class="money">￥{{parkPrice}}</span></div>
                 <div class="msg2">推荐路线：无</div>
                 <div class="bigBtn orange" @click="addOrders()">立即预约</div>
             </div>
@@ -23,114 +23,32 @@
         data(){
             return{
                 parkId: '',
+                parkName: '',
+                parkPrice: '',
                 details: '',
                 isLogin: false, // 是否登录
             }
         },
         methods:{
-            // 获取车位详情
-            getDetails() {
-                var self = this;
-                var secUrl = '';
-                var parkData = new FormData();
-                parkData.append('id', this.parkId);
-                if (this.isLogin == true) { // 登录用户
-                    secUrl = '/us/salmon/park/get.action';
-                } else {    // 普通用户
-                    secUrl = '/salmon/vspark/get.action';
-                }
-                $.ajax({
-                    url: self.global.BASE_URL + secUrl,
-                    type: 'post',
-                    data: parkData,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        if(res.code === self.global.SUCCESS_CODE) {
-                            self.details = res.data.park;
-                        } else {
-                            self.$Tips2(res.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                })
-            },
             // 添加订单
-            /*addOrders() {
+            addOrders () {
                 if (this.isLogin == false) {
-                    console.log(88, this.isLogin);
                     this.$Tips2("请先登录");
                     return;
                 }
-                var self = this;
-                var myData = new FormData();
-                myData.append('userId', this.userId);
-                myData.append('parkId', this.parkId);
-                myData.append('total', this.details.price);
-                $.ajax({
-                    url: self.global.BASE_URL+'/us/salmon/orders/add.action',
-                    type: 'post',
-                    data: myData,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        if(res.code === self.global.SUCCESS_CODE) {
-                            self.$goRoute('/person/orders');
-                        } else {
-                            self.$Tips2(res.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
+                this.$http.post('/users/orders/add',{
+                    parkId: this.parkId,
+                    parkPrice: this.parkPrice
+                }).then((res) => {
+                    if (res.data.status === '0') {
+                        this.$goRoute('/person/orders');
+                    } else {
+                        this.$Tips2(res.data.msg);
                     }
-                })
-            },*/
-            // 添加订单
-            addOrders() {
-                if (this.isLogin == false) {
-                    console.log(88, this.isLogin);
-                    this.$Tips2("请先登录");
-                    return;
-                }
-                var self = this;
-                var myData = new FormData();
-                myData.append('userId', this.userId);
-                myData.append('parkId', this.parkId);
-                myData.append('total', this.details.price);
-                $.ajax({
-                    url: self.global.BASE_URL+'/us/salmon/orders/add.action',
-                    type: 'post',
-                    data: myData,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        if(res.code === self.global.SUCCESS_CODE) {
-                            self.$goRoute('/person/orders');
-                        } else {
-                            self.$Tips2(res.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                })
+                });
             },
             // 根据浏览器定位
-            showMap3() {
+            showMap() {
                 // 百度地图API功能
                 let map = new BMap.Map("allmap");
                 let self = this;
@@ -142,7 +60,6 @@
                         let mk = new BMap.Marker(r.point);
                         map.addOverlay(mk);
                         map.panTo(r.point);
-                        // alert('您的位置：'+r.point.lng+','+r.point.lat);
                     }
                     else {
                         self.$Tips2('failed'+this.getStatus());
@@ -152,15 +69,15 @@
         },
         created() {
             this.parkId = sessionStorage.getItem('parkId');
+            this.parkName = sessionStorage.getItem('parkName');
+            this.parkPrice = sessionStorage.getItem('parkPrice');
             this.userId = sessionStorage.getItem('userId');
             if (sessionStorage.getItem('isLogin') != '' && sessionStorage.getItem('isLogin') != null) {
                 this.isLogin = sessionStorage.getItem('isLogin');
             }
-            console.log("isLogin:" + this.isLogin);
-            this.getDetails();
         },
         mounted(){
-          this.showMap3()
+          this.showMap()
         }
     }
 </script>
