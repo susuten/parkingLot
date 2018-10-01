@@ -23,11 +23,6 @@
         created(){
             
         },
-        // watch: {
-        //     $route(to,from){
-        //         console.log(to.path);
-        //     }
-        // }
     }
 </script>
 <style scoped>

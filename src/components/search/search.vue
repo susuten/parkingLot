@@ -18,14 +18,6 @@
                     <div class="carName">{{parkItem.parkName}}</div>
                     <div class="carCost">￥{{parkItem.parkPrice}}</div>
                 </li>
-                <!-- <li class="carItem fl">
-                    <div class="carBox">
-                        <img class="empty" src="../../../static/cw.png" height="165" width="117" alt="" v-show="isEmpty" @click="$goRoute('/details')"/>
-                        <img class="noEmpty" src="../../../static/cw2.png" height="165" width="117" alt="" v-show="!isEmpty"/>
-                    </div>
-                    <div class="carName">车位一</div>
-                    <div class="carCost">￥100.0</div>
-                </li> -->
             </ul>
             <fenYe :total='total' :pageSize="pageSize" :currentPage="pageNum" @pagechange="pagechange"></fenYe>
         </div>
@@ -117,7 +109,6 @@
     .carBox {
         padding: 10px;
         background-color: #fff;
-        /*box-shadow:0px 1px 20px 0px rgba(170,170,170,0.3);*/
     }
     .carBox:hover {
         box-shadow: 5px 0px 10px 0px rgba(170,170,170,0.8);

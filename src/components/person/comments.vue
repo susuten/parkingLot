@@ -13,16 +13,16 @@
                 </tr>
                 <tr v-for="messageItem in messageList">
                    <td><p v-html="messageItem.content"></p></td>
-                   <td>{{messageItem.createDate != null ? toTime(messageItem.createDate) : ''}}</td>
+                   <td>{{messageItem.createDate}}</td>
                    <td>{{messageItem.answer}}</td>
                    <td>{{messageItem.adminName}}</td>
-                   <td>{{messageItem.answerDate != null ? toTime(messageItem.answerDate) : ''}}</td>
-                   <td @click="showDeleteModal(messageItem.id)">删除</td>
+                   <td>{{messageItem.answerDate}}</td>
+                   <td @click="showDeleteModal(messageItem.msgId)">删除</td>
                </tr>
             </table>
             <!-- 留言 -->
             <div class="message">
-                <UEditor :config=config :value="config.initialContent" ref="ueditor" class='editor'>   
+                <UEditor :config=config :value="config.initialContent" ref="ueditor" class='editor'>
                 </UEditor>
                 <div class="btnList clearfix">
                     <div class="smBtn orange fl mr20" @click="showMsgModal">留言</div>
@@ -97,89 +97,40 @@
             },
             // 获取用户留言
             getMessage () {
-                var self = this;
-                var userData = new FormData();
-                userData.append('userId',this.userId);
-                $.ajax({
-                    url: self.global.BASE_URL+'/us/salmon/message/list.action',
-                    type: 'post',
-                    data: userData,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        if(res.code === self.global.SUCCESS_CODE) {
-                            self.messageList = res.data.messages
-                        } else {
-                            self.$Tips2(res.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
+                this.$http.post('/users/message/list').then((res) => {
+                    if (res.data.status === '0') {
+                        this.messageList = res.data.result;
+                    } else {
+                        this.$Tips2(res.data.msg);
                     }
-                })
+                });
             },
-           // 留言 
+           // 留言
            message() {
-                var self = this;
-                var messageData = new FormData();
-                messageData.append('content',this.$refs.ueditor.editor.getContent());
-                $.ajax({
-                    url: self.global.BASE_URL+'/us/salmon/message/add.action',
-                    type: 'post',
-                    data: messageData,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        if(res.code === self.global.SUCCESS_CODE) {
-                            self.showMsgModal();
-                            // self.close();
-                            self.$Tips1("留言成功");
-                            self.getMessage();
-                            self.cancel();
-
-                        } else {
-                            self.$Tips2(res.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
+                this.$http.post('/users/message/add',{
+                    content: this.$refs.ueditor.editor.getContent()
+                }).then((res) => {
+                    if (res.data.status === '0') {
+                        this.$Tips1("留言成功");
+                        this.showMsgModal();
+                        this.getMessage();
+                        this.cancel();
+                    } else {
+                        this.$Tips2(res.data.msg);
                     }
                 })
            },
-           // 删除留言 
+           // 删除留言
            deleteMsg() {
-                var self = this;
-                var myData = new FormData();
-                myData.append('id', this.msgId);
-                $.ajax({
-                    url: self.global.BASE_URL+'/us/salmon/message/delete.action',
-                    type: 'post',
-                    data: myData,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        if(res.code === self.global.SUCCESS_CODE) {
-                            self.$Tips1("留言删除成功");
-                            self.getMessage();
-                            self.showDeleteModal();
-                        } else {
-                            self.$Tips2(res.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
+                this.$http.post('/users/message/delete', {
+                    msgId: this.msgId
+                }).then((res) => {
+                    if (res.data.status === '0') {
+                        this.$Tips1("留言删除成功");
+                        this.getMessage();
+                        this.showDeleteModal();
+                    } else {
+                        this.$Tips2(res.data.msg);
                     }
                 })
            },
@@ -217,7 +168,7 @@
             this.$refs.ueditor.destoryE()
             next();
         }
-        
+
     }
 </script>
 <style scoped>
@@ -279,5 +230,4 @@
         width: 200px;
         margin: 30px auto;
     }
-    
 </style>

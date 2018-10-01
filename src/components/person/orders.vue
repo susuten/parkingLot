@@ -5,9 +5,9 @@
            <table class="ordersTable">
                <tr>
                    <th>订单编号</th>
-                   <!--<th>下单时间</th>-->
+                   <th>下单时间</th>
                    <!--<th>车牌号</th>-->
-                   <!--<th>车位编号</th>-->
+                   <th>车位编号</th>
                    <th>车位价格</th>
                    <th>应付金额</th>
                    <th>状态</th>
@@ -15,9 +15,10 @@
                </tr>
                <tr v-for="orderItem in ordersList">
                    <td>{{orderItem.code}}</td>
+                   <td>{{orderItem.createDate}}</td>
                    <!--<td>{{orderItem.createDate != null ? toTime(orderItem.createDate) : ''}}</td>-->
                    <!--<td>{{orderItem.user.plateNum}}</td>-->
-                   <!--<td>{{orderItem.park.name}}</td>-->
+                   <td>{{orderItem.parkName}}</td>
                    <td class="redColor">{{orderItem.total | currency('￥')}}</td>
                    <td class="redColor">{{orderItem.total | currency('￥')}}</td>
                    <td>
@@ -25,8 +26,8 @@
                         <span v-if="orderItem.status=='1'" class="orangeColor">订单完成</span>
                    </td>
                    <td>
-                        <div v-if="orderItem.status=='0'" @click="showUpdateModal(orderItem.orderId)">结算</div>
-                        <div v-if="orderItem.status=='1'" @click="showDeleteModal(orderItem.orderId)">删除</div>
+                        <div v-if="orderItem.status=='0'" @click="showUpdateModal(orderItem.code)">结算</div>
+                        <div v-if="orderItem.status=='1'" @click="showDeleteModal(orderItem.code)">删除</div>
                    </td>
                </tr>
            </table>
@@ -68,7 +69,7 @@
                 updateModal: false,
                 ordersList: [],  // 订单列表
                 userId: '',
-                orderId: '',
+                code: '',
             }
         },
         methods:{
@@ -84,36 +85,23 @@
                     if (res.data.status == '0') {
                         this.ordersList = res.data.result
                         console.log(99, this.ordersList);
+                    } else {
+                        this.$Tips2(res.data.msg);
                     }
                 })
             },
 
             // 订单结算
             updateOrders() {
-                var self = this;
-                var myData = new FormData();
-                myData.append('id', this.orderId);
-                $.ajax({
-                    url: self.global.BASE_URL+'/us/salmon/orders/update.action',
-                    type: 'post',
-                    data: myData,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        if(res.code === self.global.SUCCESS_CODE) {
-                            self.$Tips1("支付成功");
-                            self.showUpdateModal();
-                            self.getOrders();
-                        } else {
-                            self.$Tips2(res.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
+                this.$http.post('/users/orders/update',{
+                    code: this.code
+                }).then((res) => {
+                    if (res.data.status === '0') {
+                        this.$Tips1("支付成功");
+                        this.showUpdateModal();
+                        this.getOrders();
+                    } else {
+                        this.$Tips2(res.data.msg);
                     }
                 })
             },
@@ -121,57 +109,29 @@
             // 删除订单
             deleteOrders () {
                 this.$http.post('/users/orders/delete',{
-                    orderId: this.orderId
+                    code: this.code
                 }).then((res) => {
                     if (res.data.status === '0') {
                         this.$Tips1("删除订单成功");
                         this.showDeleteModal();
                         this.getOrders();
                     } else {
-                        this.$Tips2(res.message);
+                        this.$Tips2(res.data.msg);
                     }
                 })
             },
-            /*deleteOrders () {
-                var self = this;
-                var myData = new FormData();
-                myData.append('id', this.orderId);
-                $.ajax({
-                    url: self.global.BASE_URL+'/us/salmon/orders/delete.action',
-                    type: 'post',
-                    data: myData,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    crossDomain: true,
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        if(res.code === self.global.SUCCESS_CODE) {
-                            self.$Tips1("删除订单成功");
-                            self.showDeleteModal();
-                            self.getOrders();
-                        } else {
-                            self.$Tips2(res.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                })
-            },*/
             // 控制显示结算订单模态框
-            showDeleteModal(orderId) {
+            showDeleteModal(code) {
                 this.deleteModal = !this.deleteModal;
-                if (orderId != '') {
-                    this.orderId = orderId;
+                if (code != '') {
+                    this.code = code;
                 }
            },
            // 控制显示结算订单模态框
-           showUpdateModal(orderId) {
+           showUpdateModal(code) {
               this.updateModal = !this.updateModal;
-                if (orderId != '') {
-                    this.orderId = orderId;
+                if (code != '') {
+                    this.code = code;
                 }
            }
         },

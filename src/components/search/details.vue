@@ -3,8 +3,6 @@
         <div class="title">车位详情</div>
         <div class="content clearfix">
             <div class="mapBox fl">
-                <!-- <Map></Map> -->
-                <!-- <div id="allmap" ref="allmap"></div> -->
                 <div id="allmap"></div>
             </div>
             <div class="mapMsg fl">
@@ -18,7 +16,6 @@
 </template>
 
 <script>
-    // import Map from '@/components/map.vue'
     export default{
         data(){
             return{
@@ -38,9 +35,10 @@
                 }
                 this.$http.post('/users/orders/add',{
                     parkId: this.parkId,
-                    parkPrice: this.parkPrice
+                    total: this.parkPrice
                 }).then((res) => {
                     if (res.data.status === '0') {
+                        console.log(11,res.data);
                         this.$goRoute('/person/orders');
                     } else {
                         this.$Tips2(res.data.msg);
@@ -116,6 +114,9 @@
     .msg2 {
         line-height: 48px;
     }
-    p{margin-left:5px; font-size:14px;}
+    p{
+        margin-left:5px;
+         font-size:14px;
+     }
 
 </style>
