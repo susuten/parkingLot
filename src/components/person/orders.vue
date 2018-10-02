@@ -26,7 +26,7 @@
                         <span v-if="orderItem.status=='1'" class="orangeColor">订单完成</span>
                    </td>
                    <td>
-                        <div v-if="orderItem.status=='0'" @click="showUpdateModal(orderItem.code)">结算</div>
+                        <div v-if="orderItem.status=='0'" @click="showUpdateModal(orderItem.code, orderItem.parkId)">结算</div>
                         <div v-if="orderItem.status=='1'" @click="showDeleteModal(orderItem.code)">删除</div>
                    </td>
                </tr>
@@ -70,6 +70,7 @@
                 ordersList: [],  // 订单列表
                 userId: '',
                 code: '',
+                parkId: '',
             }
         },
         methods:{
@@ -94,7 +95,8 @@
             // 订单结算
             updateOrders() {
                 this.$http.post('/users/orders/update',{
-                    code: this.code
+                    code: this.code,
+                    parkId: this.parkId
                 }).then((res) => {
                     if (res.data.status === '0') {
                         this.$Tips1("支付成功");
@@ -128,10 +130,11 @@
                 }
            },
            // 控制显示结算订单模态框
-           showUpdateModal(code) {
+           showUpdateModal(code, parkId) {
               this.updateModal = !this.updateModal;
                 if (code != '') {
                     this.code = code;
+                    this.parkId = parkId;
                 }
            }
         },

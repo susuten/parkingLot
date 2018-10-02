@@ -31,7 +31,7 @@
             </div>
         </div>
         <div class="bottom">
-            <img src="../../../static/car.jpg">
+            <img src="../../../static/footer.jpg">
         </div>
     </div>
 </template>

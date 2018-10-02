@@ -122,6 +122,7 @@ router.post('/orders/add', function (req, res, next) {
                         let order = {
                             code: code,
                             parkName: doc2.parkName,
+                            parkId: parkId,
                             total: total,
                             status: 0,
                             createDate: createDate
@@ -150,7 +151,7 @@ router.post('/orders/add', function (req, res, next) {
                                         console.log("save");
                                         res.json({
                                             status: "0",
-                                            msg: '',
+                                            msg: 'success',
                                             result: {
                                                 code: order.code,
                                                 total: order.total
@@ -170,47 +171,42 @@ router.post('/orders/add', function (req, res, next) {
 // 结算订单
 router.post('/orders/update', function (req, res, next) {
     let userId = req.cookies.userId,
+        parkId = req.body.parkId,
         code = req.body.code;
-    User.findOne({"userId": userId},function(err, doc) {
+    User.findOneAndUpdate({'userId': userId, 'orderList.code': code}, {
+        $set:{
+            'orderList.$.status':1
+        }
+    }, function(err, doc) {
         if (err) {
-            res.json({
-                status: "1",
+            res.json ({
+                status: '1',
                 msg: err.message,
                 result: ''
-            });
+            })
         } else {
-            try {
-                doc.orderList.forEach( (item) => {
-                    console.log(item.code, code);
-                    // 执行操作 并退出循环 用break无效 试着用try catch
-                    if (item.code == code) {
-                        item.status = 1;
-                        console.log("item.status:" + item.status);
-                        throw "jump out"
-                    }
-                });
-            } catch (e) {
-                console.log(e);
-            }
-            console.log("执行保存操作");
-            doc.save(function(err2, doc2) {
-               if (err2) {
-                   res.json({
-                       status: "1",
-                       msg: err2.message,
-                       result: ''
-                   });
-               } else {
-                   console.log(99, doc2);
-                   res.json({
-                       status: "0",
-                       msg: '',
-                       result: 'success'
-                   });
-               }
-            });
+            // 结算之后车位需要空出来
+            Park.findOneAndUpdate({parkId: parkId}, {
+                $set: {
+                    'parkStatus': 0
+                }
+            }, function (err2, doc2) {
+                if (err) {
+                    res.json ({
+                        status: '1',
+                        msg: err2.message,
+                        result: ''
+                    });
+                } else {
+                    res.json ({
+                        status: '0',
+                        msg: 'success',
+                        result: ''
+                    });
+                }
+            })
         }
-    });
+    })
 });
 
 // 删除订单
@@ -233,7 +229,7 @@ router.post('/orders/delete', function (req, res, next) {
         } else {
             res.json ({
                 status: '0',
-                msg: '',
+                msg: 'success',
                 result: ''
             });
         }
@@ -253,7 +249,7 @@ router.post('/message/list', function (req, res, next) {
         } else {
             res.json({
                 status: '0',
-                msg: '',
+                msg: 'success',
                 result: doc.messageList
             })
         }
@@ -304,8 +300,8 @@ router.post('/message/add', function (req, res, next) {
                 } else {
                     res.json ({
                         status: '0',
-                        msg: '',
-                        result: 'success'
+                        msg: 'success',
+                        result: ''
                     })
                 }
             })
@@ -317,7 +313,7 @@ router.post('/message/add', function (req, res, next) {
 router.post('/message/delete', function (req, res, next) {
     let userId = req.cookies.userId,
         msgId = req.body.msgId;
-    User.findOne({userId: userId}, {
+    User.findOneAndUpdate({userId: userId}, {
         $pull:{
             'messageList':{
                 'msgId': msgId
@@ -331,7 +327,11 @@ router.post('/message/delete', function (req, res, next) {
                 result: ''
             })
         } else {
-
+            res.json ({
+                status: '0',
+                msg: 'success',
+                result: ''
+            });
         }
     })
 });
@@ -376,8 +376,8 @@ router.post('/update', function (req, res, next) {
         } else {
             res.json({
                 status: '0',
-                msg: '',
-                result: 'success'
+                msg: 'success',
+                result: ''
             })
         }
     })
@@ -413,8 +413,8 @@ router.post('/updatePwd', function (req, res, next) {
                     } else {
                         res.json({
                            status: '0',
-                           msg: '',
-                           result: 'success'
+                           msg: 'success',
+                           result: ''
                         });
                     }
                 });
