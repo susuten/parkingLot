@@ -5,8 +5,9 @@ let userSchema = new mongoose.Schema({
     "userName": String,
     "userPwd": String,
     "phone": String,
-    "plateNum": String,
-    "point": String,
+    "plateNum": String,         /* 车牌号码 */
+    "point": String,            /* 积分 */
+    "createDate": String,
     "orderList": Array,
     "messageList": Array
 });

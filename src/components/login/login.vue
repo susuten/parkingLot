@@ -1,7 +1,6 @@
 <template>
     <div class="bg">
         <div class="login">
-            <!-- <img src="../../../static/logo1.png" alt="logo" class="logo"/> -->
             <div class="logo">salmon停车场登录</div>
             <div class="userBox">
                 <img src="../../../static/login_per.png" alt="" />
@@ -76,11 +75,6 @@
         margin-left: -185px;
         margin-top: -185px;
     }
-    /*.logo {
-        width: 187px;
-        height: 40px;
-        padding: 33px 95px 46px 88px;
-    }*/
     .logo {
         height: 120px;
         line-height: 120px;

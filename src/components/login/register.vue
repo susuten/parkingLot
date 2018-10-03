@@ -1,7 +1,6 @@
 <template>
     <div class="bg">
         <div class="register">
-            <!-- <img src="../../../static/logo1.png" alt="logo" class="logo"/> -->
             <div class="logo">salmon停车场注册</div>
             <div class="userBox">
                 <input type="text" placeholder="请输入用户名" v-model="name" autocomplete="off"/>
@@ -33,75 +32,44 @@
             }
         },
         methods:{
-            // 校验手机
-            phone(){
-                var patrn = /^((13[0-9])|(15[1-3,5-9])|(17[7])|(18[0-9]))\d{8}$/;
-                if(this.phone==''){
-                    this.$Tips2('请输入手机号码')
-                    return
-                }
-                if(!patrn.test(this.phone)){
-                    this.$Tips2('手机号码输入错误')
-                    return
-                }
-            },
             // 注册
             register () {
-                var patrn = /^((13[0-9])|(15[1-3,5-9])|(17[7])|(18[0-9]))\d{8}$/;
                 if(this.name == '') {
                     this.$Tips2("请输入用户名");
                     return;
-                } 
+                }
                 if(this.phone == '') {
                     this.$Tips2("请输入联系电话");
                     return;
-                } 
-                if(!patrn.test(this.phone)){
-                    this.$Tips2('手机号码输入错误')
-                    return
                 }
                 if(this.carNumber == '') {
                     this.$Tips2("请输入车牌号码");
                     return;
-                } 
+                }
                 if(this.password == '') {
                     this.$Tips2("请输入密码");
                     return;
                 }
-                var self = this;
-                var regData = new FormData();
-                regData.append('name', this.name);
-                regData.append('phone', this.phone);
-                regData.append('plateNum', this.carNumber);
-                regData.append('password', this.password);
-                $.ajax({
-                    url: self.global.BASE_URL+'/us/salmon/user/register.action',
-                    type: 'post',
-                    data: regData,
-                    xhrFields: {
-                        withCredentials: true
-                    },
-                    contentType: false,
-                    processData: false,
-                    success: function(res) {
-                        if(res.code === self.global.SUCCESS_CODE) {
-                            self.$Tips1("注册成功，即将跳转到登录页面")
-                            setTimeout( () => {
-                                self.$router.push('/login');
-                            }, 3000)
+                this.$http.post('/users/register', {
+                    userName: this.name,
+                    phone: this.phone,
+                    plateNum: this.carNumber,
+                    userPwd: this.password
+                }).then ((res) => {
+                    if(res.data.status === '0') {
+                        this.$Tips1("注册成功，即将跳转到登录页面")
+                        setTimeout( () => {
+                            this.$router.push('/login');
+                        }, 3000)
 
-                        } else {
-                            self.$Tips2(res.message);
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
+                    } else {
+                        this.$Tips2(res.data.msg);
                     }
-                })
+                });
             },
         },
         created(){
-            
+
         }
     }
 </script>
@@ -111,7 +79,7 @@
         height: 100%;
         background: url(../../../static/login_bg.jpg) no-repeat;
          -webkit-background-size: 100% 100%;
-        background-size: 100% 100%; 
+        background-size: 100% 100%;
         position: relative;
     }
     .register {
@@ -124,11 +92,6 @@
         margin-left: -185px;
         margin-top: -185px;
     }
-    /*.logo {
-        width: 187px;
-        height: 40px;
-        padding: 33px 95px 46px 88px;
-    }*/
     .logo {
         height: 120px;
         line-height: 120px;

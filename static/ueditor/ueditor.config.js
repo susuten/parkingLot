@@ -31,9 +31,6 @@
         UEDITOR_HOME_URL: URL
 
         // 服务器统一请求接口路径
-        // , serverUrl: "http://192.168.0.112:8082/ueditor/exec.action"
-        // , serverUrl: "https://mendian.chinawr.net/firestore/ueditor/exec.action"
-        // , serverUrl: "http://jiulong.chinawr.net/leathermall/ueditor/exec.action"
         , serverUrl: "http://salmon.yinyuming.club/parkingLot/ueditor/exec.action"
 
         //工具栏上的所有的功能按钮和下拉框，可以在new编辑器的实例时选择自己需要的重新定义

@@ -11,6 +11,80 @@ router.get('/', function(req, res, next) {
   res.send('respond with a resource');
 });
 
+// 注册
+router.post('/register', function (req, res, next) {
+
+    let param = {
+        userId: '',
+        createDate: '',
+        userName: req.body.userName,
+        phone: req.body.phone,
+        plateNum: req.body.plateNum,
+        userPwd: req.body.userPwd,
+        point: 0
+    }
+
+   // 检验用户名或者手机号码是否被注册过
+    User.findOne( {
+        $or: [
+            {userName: param.userName},
+            {phone: param.phone}
+        ]
+    }, function (err, doc) {
+        if (err) {
+            res.json({
+                status: "1",
+                msg: err.message,
+                result: ''
+            })
+        } else {
+            if (doc) {
+                if (doc.userName == param.userName) {
+                    res.json({
+                        status: "10001",
+                        msg: '该用户名已被用',
+                        result: ''
+                    })
+                } else {
+                    res.json({
+                        status: "10001",
+                        msg: '该手机号码已被用',
+                        result: ''
+                    })
+                }
+            } else {
+                // 生成userId
+                let platform = '422';
+
+                let r1 = Math.floor(Math.random() * 10);
+                let r2 = Math.floor(Math.random() * 10);
+
+                let sysDate = new Date().Format('yyyyMMddhhmmss')
+                let createDate = new Date().Format('yyyy-MM-dd hh:mm:ss');
+                console.log("时间：" + createDate);
+                let userId = platform + r1 + sysDate + r2;
+                param.userId = userId;
+                param.createDate = createDate;
+                User.insertMany([param], function(err2, doc2) {
+                    if (err2) {
+                        res.json({
+                            status: "1",
+                            msg: err2.message,
+                            result: ''
+                        })
+                    } else {
+                        res.json ({
+                            status: '0',
+                            msg: 'success',
+                            result: doc2
+                        })
+                    }
+                })
+            }
+        }
+    })
+});
+
 // 登录
 router.post("/login", function (req, res, next) {
    let param = {
@@ -21,7 +95,8 @@ router.post("/login", function (req, res, next) {
        if (err) {
            res.json({
                status: "1",
-               msg: err.message
+               msg: err.message,
+               result: ''
            })
        } else {
            if (doc) {
