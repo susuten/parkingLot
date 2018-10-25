@@ -3,7 +3,7 @@ let router = express.Router();
 let mongoose = require('mongoose');
 let Parks = require('../models/parks');
 
-mongoose.connect('mongodb://123.0.0.1:27017/park', { useNewUrlParser: true });
+mongoose.connect('mongodb://127.0.0.1:27017/park', { useNewUrlParser: true });
 
 mongoose.connection.on('connected', function () {
     console.log('MongoDB connected success.');
